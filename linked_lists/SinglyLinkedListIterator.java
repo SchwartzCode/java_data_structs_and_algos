@@ -83,6 +83,7 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 	public void addFirst(E data) {
 		Node<E> tmp = new Node<E>(data, this.head);
 		this.head = tmp;
+		size++;
 	}
 
 	public void addLast(E data) {
@@ -143,17 +144,24 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 			System.out.println("size: " + size() + " " + pos);
 			return;
 		}
-		int k = 0;
+		int k = 1;
 		Node<E> tmp = head;
+		Node<E> next = tmp.getNext();
 		while(tmp.getNext() != null && k++ < pos) {
 			tmp = tmp.getNext();
+			next=next.getNext();
 		}
-		System.out.println("k: " + k);
+		System.out.println("pos: " + pos + ", data: " + data);
+		if (pos == 0) {
+			head = new Node<E>(data, head);
+			size++;
+			return;
+		}
 		tmp.setNext(new Node<E>(data, tmp.getNext()));
 		size++;
 	}
 
-	//starts at 1 for first element (element that head points to)
+	//starts at 0th for first element (element that head points to)
 	public E get(int i) {
 		E data;
 		if (i > size) {
@@ -161,7 +169,7 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 		}
 		else {
 			Node<E> tmp = head;
-			for (int j=1; j<i; j++) {
+			for (int j=0; j<i; j++) {
 				tmp = tmp.getNext();
 			}
 			data = tmp.getData();
@@ -182,7 +190,7 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 			
 			Node<E> new_node = new Node<E>(e, tmp.getNext());
 			
-			if (i==1)		//im sure there's a cleaner way to do this... correction: there definitely is
+			if (i==1)		
 			{head = new_node;}
 			else {
 				Node<E> tmp2 = head;
@@ -192,26 +200,37 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 				tmp2.setNext(new_node);
 			}
 		}
+		size++;
 		return;
 		
 	}
 
 	//starts at i=1 for first element
 	public E remove(int i) {
+		
 		if (i > size) {
 			return null;
 		}
 		
-		Node<E> tmp = head;
-		for (int j=1; j<i-1; j++) {
-			tmp = tmp.getNext();
+		Node<E> before = head;
+		Node<E> removed = head.getNext();
+		for (int j=0; j<i-1; j++) {
+			removed = removed.getNext();
+			before = before.getNext();
 		}
-		Node<E> removed = tmp.getNext();
+		
 		Node<E> after_node = removed.getNext();
 		
-		tmp.setNext(after_node);
+		if (i == 0) {
+			head = head.getNext();
+		}
+		else {
+			before.setNext(after_node);
+		}
 		
+		size--;
 		return removed.getData();
+
 	}
 	
 	public String toString() {
@@ -264,6 +283,7 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 	
 	public static void testList() {
 		SinglyLinkedListIterator<Integer> ll = new SinglyLinkedListIterator<Integer>();
+		
 		ll.add(0, 10);
 		ll.addFirst(210);
 		ll.addLast(30);
@@ -301,15 +321,22 @@ public class SinglyLinkedListIterator<E> implements Iterable<E>, List<E> {
 	
 	public static void testAddRemove() {
 		SinglyLinkedListIterator<Integer> ll = new SinglyLinkedListIterator<Integer>();
+		/*
 		ll.add(0, -1);
 		ll.addLast(10);
 		ll.addLast(210);
 		ll.addLast(30);
 		ll.addLast(500);
+		*/
+		
+		for (int i=0; i<10; i++) {
+			ll.addLast(i);
+		}
 		System.out.println(ll);
 		
-		ll.set(1, 123);
-		ll.remove(2);
+		System.out.println(ll.remove(6));
+
+		
 		
 		
 		System.out.println(ll);

@@ -7,6 +7,7 @@ import comp20010.SinglyLinkedListIterator.Node;
 
 /**
  * A basic doubly linked list implementation.
+ * 
  */
 public class DoublyLinkedList<E> implements List<E> {
 
@@ -242,61 +243,62 @@ public class DoublyLinkedList<E> implements List<E> {
 
 	@Override
 	public void set(int i, E e) {
-		if (i > size) {
+		if (i > size || i<0) {
 			return;
 		}
 		
-		Node<E> tmp = header;
+		Node<E> before = header;
 		for (int j=0; j<i; j++) {
-			tmp = tmp.getNext();
+			before = before.getNext();
 		}
-		Node<E> prev = tmp.getPrev();
-		Node<E> next = tmp.getNext();
 		
-		Node<E> new_node = new Node<E>(e, prev, next);
-		prev.setNext(new_node);
-		next.setPrev(new_node);
+		Node<E> after = before.getNext().getNext();
+		Node<E> insert = new Node<E>(e, before, after);
+		before.setNext(insert);
+		after.setPrev(insert);
 		
 		return;
 	}
 
-	//inserts element E at location i, with i=1 being the first element in the list
+	//inserts element E before location i, with i=0 being the first element in the list
 	public void add(int i, E e) {
-		if (i-1>size) {
+		if (i>=size || i<0) {
 			return;
 		}
 		
-		Node<E> tmp = header;
+		Node<E> before = header;
 		for (int j=0; j<i; j++) {
-			tmp = tmp.getNext();
+			before = before.getNext();
 		}
 		
-		Node<E> prev = tmp.getPrev();
+		Node<E> after = before.getNext();
+		Node<E> insert = new Node<E>(e, before, after);
+		before.setNext(insert);
+		after.setPrev(insert);
+	
 		
-		Node<E> new_node = new Node<E>(e, prev, tmp);
-		prev.setNext(new_node);
-		tmp.setPrev(new_node);
 		return;
-
 	}
 
-	@Override
+	//removes element i in the list, with i=0 being the first element
 	public E remove(int i) {
-		if (i>size) {
+		if (i>=size || i<0) {
 		return null;
 		}
 		
-		Node<E> tmp = header;
+		Node<E> before = header;
 		for (int j=0; j<i; j++) {
-			tmp = tmp.getNext();
+			before = before.getNext();
 		}
-		Node<E> prev = tmp.getPrev();
-		Node<E> next = tmp.getNext();
 		
-		prev.setNext(next);
-		next.setPrev(prev);
+		Node<E> removed = before.getNext();
+		Node<E> after = removed.getNext();
 		
-		return tmp.getData();
+		before.setNext(after);
+		after.setPrev(before);
+		
+		
+		return removed.getData();
 	}
 
 	/**
@@ -323,7 +325,9 @@ public class DoublyLinkedList<E> implements List<E> {
 		
 		System.out.println(ll);
 		
-		System.out.println(ll.remove(4));
+		
+		//ll.add(0, 555);
+		ll.remove(3);
 		
 		/*
 		System.out.println(ll.get(1));
