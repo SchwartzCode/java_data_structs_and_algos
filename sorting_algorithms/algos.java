@@ -31,10 +31,45 @@ public class algos {
 		}
 	}
 	
-	public static int[] mergeSort(int[] in) {
+	public static void mergeSort(int[] in, int begin, int end) {
+		int size = in.length;
+		int[] temp = new int[size];
+		if (begin > end) {
+			return;
+		}
+		else if (end-begin > 1) {
+			int middle = (begin + end)/2;
+			mergeSort(in, begin, middle);
+			mergeSort(in, middle+1, end);
+			mergeHalves(in, temp, begin, middle, end);
+		}
 		
 		
-		return in;
+	}
+	
+	public static void mergeHalves(int[] array, int[] temp, int start, int middle, int end) {
+		for (int i = start; i <= end; i++) {
+            temp[i] = array[i];
+        }
+        int i = start;
+        int j = middle + 1;
+        int k = start;
+        
+        while (i <= middle && j <= end) {
+            if (temp[i] <= temp[j]) {
+                array[k] = temp[i];
+                i++;
+            } else {
+                array[k] = temp[j];
+                j++;
+            }
+            k++;
+        }
+        while (i <= middle) {
+            array[k] = temp[i];
+            k++;
+            i++;
+        }
 	}
 	
 	public static void main(String[] args)
@@ -46,7 +81,7 @@ public class algos {
 		}
 		System.out.println();
 		
-		bubbleSort(pizza);
+		mergeSort(pizza, 0, pizza.length-1);
 		
 		for (int i:pizza) {
 			System.out.print(i + " ");
