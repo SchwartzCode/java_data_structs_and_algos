@@ -1,205 +1,359 @@
-package comp20010_practical2;
-//package lists;
-
-
+package jonathan_schwartz_code_repository;
 
 import java.util.Iterator;
+/*
+ * Implementing this interface allows an object to be the target of
+ * the "for-each loop" statement. See
+ */
+public class SinglyLinkedList<E> implements Iterable<E>, List<E> {
 
-public class SinglyLinkedList {
-	/**
-	 * Node of a singly linked list, which stores a reference to its element and to
-	 * the subsequent node in the list (or null if this is the last node).
-	 */
-	private static class Node {
+	public static class Node<E> {
+		private E data;
+		private Node<E> next;
 
-		/** The element stored at this node */
-		private String element; // reference to the element stored at this node
-
-		/** A reference to the subsequent node in the list */
-		private Node next; // reference to the subsequent node in the list
-
-		/**
-		 * Creates a node with the given element and next node.
-		 *
-		 * @param e: the element to be stored
-		 * @param n: reference to a node that should follow the new node
-		 */
-		public Node(String e, Node n) {
-			element = e;
-			next = n;
+		public Node(E e, Node<E> n) {
+			this.data = e;
+			this.next = n;
 		}
 
-		/**
-		 * Returns the element stored at the node.
-		 * 
-		 * @return the element stored at the node
-		 */
-		private String getElement() {
-			return this.element;
+		public E getData() {
+			return this.data;
 		}
 
-		/**
-		 * Returns the node that follows this one (or null if no such node).
-		 * 
-		 * @return the following node
-		 */
-		public Node getNext() {
+		public Node<E> getNext() {
 			return this.next;
 		}
 
-		/**
-		 * Sets the node's next reference to point to Node n.
-		 * 
-		 * @param n
-		 *            the node that should follow this one
-		 */
-		public void setNext(Node n) {
-			next = n;
+		public void setNext(Node<E> n) {
+			this.next = n;
 		}
-		
+
 		public String toString() {
-			return element;
+			return this.data.toString();
 		}
-	} 
+	}
 
-	// instance variables of the SinglyLinkedList
-	/** The head node of the list */
-	private Node head = null; // head node of the list (or null if empty)
+	private Node<E> head = null;
+	private int size = 0;
 
-	/** The last node of the list */
-	private Node tail = null; // last node of the list (or null if empty)
-
-	/** Number of nodes in the list */
-	private int size = 0; // number of nodes in the list
-
-	/** Constructs an initially empty list. */
 	public SinglyLinkedList() {
-	} 
 
-	// access methods
-	/**
-	 * Returns the number of elements in the linked list.
-	 * 
-	 * @return number of elements in the linked list
-	 */
+	}
+
 	public int size() {
 		return this.size;
 	}
 
-	/**
-	 * Tests whether the linked list is empty.
-	 * 
-	 * @return true if the linked list is empty, false otherwise
-	 */
 	public boolean isEmpty() {
-		if (head == null) {
-			return true;
-		}
-		else {return false;}
+		return this.size == 0;
 	}
 
-	/**
-	 * Returns (but does not remove) the first element of the list
-	 * 
-	 * @return element at the front of the list (or null if empty)
-	 */
-	public String first() { // returns (but does not remove) the first element
+	public E first() {
 		if (head == null) {
 			return null;
 		}
-		return head.getElement();
+		return (E) head.getData();
 	}
 
-	/**
-	 * Returns (but does not remove) the last element of the list.
-	 * 
-	 * @return element at the end of the list (or null if empty)
-	 */
-	public String last() { // returns (but does not remove) the last element
-		Node tmp = head;
+	public E last() {
+		Node<E> tmp = head;
 		while (tmp.getNext() != null) {
 			tmp = tmp.getNext();
 		}
-		return tmp.getElement();
+		return tmp.getData();
 	}
 
-	// update methods
-	/**
-	 * Adds an element to the front of the list.
-	 * 
-	 * @param e
-	 *            the new element to add
-	 */
-	public void addFirst(String e) { // adds element e to the front of the list
-		Node tmp = new Node(e, this.head);
+	public void addFirst(E data) {
+		Node<E> tmp = new Node<E>(data, this.head);
 		this.head = tmp;
+		size++;
 	}
 
-
-	/**
-	 * Adds an element to the end of the list.
-	 * 
-	 * @param e
-	 *            the new element to add
-	 */
-	public void addLast(String e) { // adds element e to the end of the list
-		Node tmp = head;
+	public void addLast(E data) {
+		if (size == 0) {
+			Node<E> newTail = new Node<E>(data, null);
+			head = newTail;
+			size += 1;
+			return;
+		}
+		Node<E> tmp = head;
 		while (tmp.getNext() != null) {
 			tmp = tmp.getNext();
 		}
-		Node netTail = new Node(e, tmp);
-		tmp.setNext(netTail);
+		Node<E> newTail = new Node<E>(data, null);
+		tmp.setNext(newTail);
 		size += 1;
+		return;
+	}
+
+	public E removeFirst() {
+		if (isEmpty()) {
+			return null; // nothing to remove
+		}
+		E res = head.getData();
+		head = head.getNext(); // will become null if list had only one node
+		size--;
+		return res;
+	}
+
+	public E removeLast() {
+		if(isEmpty()) {
+			return null;
+		}	
+		if(size() == 1) {
+			E res = head.getData();
+			head = null;
+			return res;
+		}
+		Node<E> prev = head;
+		Node<E> curr = prev.getNext();
+		while (curr.getNext() != null) {
+			prev = curr;
+			curr = curr.getNext();
+		}
+		E res = curr.getData();
+		prev.setNext(null);
+		size--;
+		return res;
+	}
+
+	public void add(int pos, E data) {
+		if(size() == 0) {
+			head = new Node<E>(data, null);
+			size++;
+			return;
+		}
+		if(size() <= pos) {
+			System.out.println("size: " + size() + " " + pos);
+			return;
+		}
+		int k = 1;
+		Node<E> tmp = head;
+		Node<E> next = tmp.getNext();
+		while(tmp.getNext() != null && k++ < pos) {
+			tmp = tmp.getNext();
+			next=next.getNext();
+		}
+		//System.out.println("pos: " + pos + ", data: " + data);
+		if (pos == 0) {
+			head = new Node<E>(data, head);
+			size++;
+			return;
+		}
+		tmp.setNext(new Node<E>(data, tmp.getNext()));
+		size++;
+	}
+
+	//starts at 0th for first element (element that head points to)
+	public E get(int i) {
+		E data;
+		if (i > size) {
+			return null;
+		}
+		else {
+			Node<E> tmp = head;
+			for (int j=0; j<i-1; j++) {
+				tmp = tmp.getNext();
+			}
+			data = tmp.getData();
+		}
+		return data;
+	}
+
+	
+	public void set(int i, E e) {
+		if (i > size) {
+			return;
+		}
+		else {
+			Node<E> tmp = head;
+			for (int j=1; j<i; j++) {
+				tmp = tmp.getNext();
+			}
+			
+			Node<E> new_node = new Node<E>(e, tmp.getNext());
+			
+			if (i==1)		
+			{head = new_node;}
+			else {
+				Node<E> tmp2 = head;
+				for (int a=1; a<i-1; a++) {
+					tmp2=tmp2.getNext();
+				}
+				tmp2.setNext(new_node);
+			}
+		}
+		size++;
+		return;
+		
+	}
+
+	//starts at i=0 for first element
+	public E remove(int i) {
+		
+		if (i > size) {
+			return null;
+		}
+		
+		Node<E> before = head;
+		Node<E> removed = head.getNext();
+		for (int j=0; j<i-1; j++) {
+			removed = removed.getNext();
+			before = before.getNext();
+		}
+		
+		Node<E> after_node = removed.getNext();
+		
+		if (i == 0) {
+			removed = head;
+			head = head.getNext();
+		}
+		else {
+			before.setNext(after_node);
+		}
+		
+		size--;
+		return removed.getData();
+
 	}
 	
-	public void insertBefore(String key, String s) {
-		// TODO
+	public String toString() {
+		String output = new String();
+		output += "@size=" + size() + "\n";
+		for (E tmp : this) {
+			output += "> " + tmp + "\n";
+		}
+		return output;
 	}
 
-	public void remove(String key) {
-		// TODO
-	}
-	/**
-	 * Removes and returns the first element of the list.
-	 * 
-	 * @return the removed element (or null if empty)
-	 */
-	public Node removeFirst() { // removes and returns the first element
-		// TODO
+	// this method implements the Iterable interface, but we
+	// need a new object to keep
+	public Iterator<E> iterator() {
+		return new ListIterator<E>();
 	}
 
-	public Object copy() {
-		// TODO
-	}
-	@SuppressWarnings({ "unchecked" })
-	public boolean equals(Object o) {
-		// TODO
-	}
+	public class ListIterator<T> implements Iterator<T> {
 
+		@SuppressWarnings("unchecked")
+		Node<T> curr = (Node<T>) head;
 
-	public Iterator<String> iterator() {
-		return new ListIterator();
+		@Override
+		public boolean hasNext() {
+			return curr != null;
+		}
+
+		@Override
+		public T next() {
+			T val = curr.getData();
+			curr = curr.getNext();
+			return val;
+		}
 	}
-	private class ListIterator implements Iterator<String> {
-		// TODO
+	
+	public void reverse() {
+		Node<E> prev = null;
+		Node<E> curr = head;		
+		Node<E> next = curr.getNext();
+		
+		while (curr != null) {
+			next = curr.getNext();
+			curr.setNext(prev);
+			prev = curr;
+			curr = next;
+		}
+		head = prev;
+		
 	}
-	/**
-   * Produces a string representation of the contents of the list.
-   * This exists for debugging purposes only.
-   */
-  public String toString() {
-	  String output = new String();
-	  Node tmp = this.head;
-	  output += head;
-	  while (tmp.getNext() != null) {
-		  tmp = tmp.getNext();
-		  output += tmp;
-	  }
-	  
-	  return output;
-  }
-  
-  public static void main(String[] args) {
-	  System.out.println("aa");
-  }
+	
+	public static void testList() {
+		SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
+		
+		
+		ll.add(0, 10);	//(10)
+		ll.addFirst(210); // (210, 10)
+		ll.addLast(30); // (210, 10, 30)
+		ll.add(0, 500); // (500, 210, 10, 30)
+		ll.add(1,  123); // (500, 123, 210, 10, 30)
+		System.out.println(ll);
+
+		ll.reverse(); 
+		
+		System.out.println("Reversed: \n" + ll);
+		
+		
+		System.out.println(ll); // (30, 10, 210, 123, 500)
+
+		
+		System.out.println("last node: " + ll.last() + "\tRemoving:" + ll.removeLast());
+		System.out.println(ll);
+		
+		System.out.println("remove first: " + ll.removeFirst());
+		System.out.println(ll);		
+
+		System.out.println("remove first: " + ll.removeFirst());
+		System.out.println(ll);	
+		
+		System.out.println("remove first: " + ll.removeFirst());
+		System.out.println(ll);	
+		
+		System.out.println("remove first: " + ll.removeFirst());
+		System.out.println(ll);	
+		
+	}
+	
+	public static void testAddRemove() {
+		SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
+		/*
+		ll.add(0, -1);
+		ll.addLast(10);
+		ll.addLast(210);
+		ll.addLast(30);
+		ll.addLast(500);
+		*/
+		
+		for (int i=0; i<10; i++) {
+			ll.addLast(i);
+		}
+		System.out.println(ll.get(2) + " = 1");
+		System.out.println(ll);
+		
+		System.out.println("Removing: " + ll.remove(0));
+		System.out.println("Removing: " + ll.remove(4));
+		System.out.println("Removing: " + ll.remove(6));
+
+		System.out.println("\n" + ll);
+	}
+	
+	public static SinglyLinkedList<Integer> makeList(int n) {
+		SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
+		for (int i=0; i<n; i++) {
+			ll.addLast(0);
+		}
+		
+		return ll;
+	}
+	public static void testComplexity() {
+		for(int n = 100; n<500; n+=10) {
+			SinglyLinkedList<Integer> ll = makeList(n);
+			
+			long start = System.currentTimeMillis();
+			
+			int loops = 100000;
+			for (int i = 0; i<loops; i++) {
+				ll.add(n/2, -1);
+				ll.remove(n/2);
+			}
+			
+			long end = System.currentTimeMillis();
+			
+			System.out.println(n + "\t\t" + 1.0*(end - start)/loops);
+		}
+	}
+	
+	public static void main(String[] args) {
+		testAddRemove();
+		//testComplexity();
+		
+		testList();
+	}
 }
