@@ -1,4 +1,5 @@
 package sorting_algorithms;
+//some simple sorting algorithms implemented in java
 
 public class algos {
 	public static void swap(int[] arr, int pos1, int pos2) {
